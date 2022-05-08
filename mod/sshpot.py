@@ -14,18 +14,7 @@ from time import strftime
 from twisted.python.logfile import LogFile
 from twisted.enterprise import adbapi
 from re import match
-
-class PotFactory:
-    #dbpool = None
-
-    def __init__(self, logfile=None, dburl=None):
-        self.logfile = logfile
-
-    def updatePot(self, login, password, host):
-        log.msg('Thank you %s - %s : %s' % (host, login.decode("utf8"), password.decode("utf8")))
-        if self.logfile:
-            line = "%s : %s : %s : %s\n" % (strftime('%F %T'), host, login.decode("utf8"), password.decode("utf8"))
-            open(self.logfile, 'a').write(line)
+from common import PotFactory
 
 
 publicKey = b'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAwRDx36H79uAlt4aGFonJvm7V8cUttqShwg9eYHZnFNc/Sb5L+ERf1TnMx/eqcnFesBzbltdBfXfQkaRHNA1GHBGec0OcaDwGGXGMGWGyyUB8hB+7ftpyWbsCnN3qBSoGfIo1JnEUXpsQ0B0EnMiQqHo7TImG7LVSiV6tsUuhSWX8s3zXPLLcL/CCS+p6wK6Y7EmF+YylcOPkvG05Kvzzb6WWFFGop7/mqOLL9lrgYbjjsSQkQXR2NC2QunWkiB0/r2MaaeLamv4HUmPUw2lPgPlibpmnu1BkLayIXEOJiFEsDSCXm81IKj0aMez0f6FY8sDpd9lLnsFbjyOhzTmJ6w=='
@@ -111,7 +100,6 @@ class PotSSHServerTransport(transport.SSHServerTransport):
                     self.sendKexInit() # dirty workaround for buggy ssh-bots
 
         packet = self.getPacket()
-        print(packet)
         while packet:
             messageNum = packet[0]
             self.dispatchMessage(messageNum, packet[1:])
@@ -135,8 +123,8 @@ class PotSSHFactory(factory.SSHFactory, PotFactory):
     publicKeys = {b'ssh-rsa': keys.Key.fromString(publicKey)}
     privateKeys = {b'ssh-rsa': keys.Key.fromString(privateKey)}
 
-    def __init__(self, logfile=None, versionString=None):
-        PotFactory.__init__(self, logfile)
+    def __init__(self, logfile=None, proto=None):
+        PotFactory.__init__(self, logfile, proto)
 
         self.portal = portal.Portal(MockRealm(), (checkers.InMemoryUsernamePasswordDatabaseDontUse(),))
         self.protocol.ourVersionString = random.choice([b'SSH-2.0-OpenSSH_5.5p1 Debian-6',
@@ -148,6 +136,6 @@ class PotSSHFactory(factory.SSHFactory, PotFactory):
                                                         b'SSH-1.99-Cisco-1.25',])
 
 if __name__ == '__main__':
-    t = PotSSHFactory("test.log")
+    t = PotSSHFactory("test.log", "ssh")
     reactor.listenTCP(4444, t)
     reactor.run()
