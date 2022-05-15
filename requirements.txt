@@ -1,1 +1,3 @@
-Twisted
+twisted
+bcrypt
+pyasn1
