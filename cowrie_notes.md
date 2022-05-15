@@ -1,3 +1,5 @@
+## Cowrie notes
+
 * Cowrie is a SSH/Telnet honeypot designed to log brute force attacks and shell commands. Two interaction modes:
 	* Medium: Emulates UNIX in python, builds fake files/file content, saves any downloaded file
 	* High: Acts as a proxy (Never explored)
