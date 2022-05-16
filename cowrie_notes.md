@@ -3,6 +3,7 @@
 * Cowrie is a SSH/Telnet honeypot designed to log brute force attacks and shell commands. Two interaction modes:
 	* Medium: Emulates UNIX in python, builds fake files/file content, saves any downloaded file
 	* High: Acts as a proxy (Never explored)
+* Project Repo: https://github.com/cowrie/cowrie
 * Cowrie honeypots are installed as docker images and all commands and executed via docker (start, stop, restart, inspect etc.)
 * Docker containers created are started by default whenever system restarts
 * Example docker commad to create a cowrie instances for particular ports:
